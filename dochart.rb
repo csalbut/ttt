@@ -8,6 +8,8 @@ class Task
     attr_reader :duration
     @timestamps
 
+    include Comparable
+
     def initialize
         @name = ''
         @timestamps = Array.new
@@ -29,6 +31,14 @@ class Task
         last_timestamp[:stop] = seconds
         @duration += last_timestamp[:stop] - last_timestamp[:start]
         @timestamps.push(last_timestamp)
+    end
+
+    def <=> (other)
+        s = self.duration
+        o = other.duration
+        return  1 if s > o
+        return -1 if s < o
+        return  0 if s == o
     end
 
     def dbg_print
@@ -96,6 +106,8 @@ class TaskSet
 
     @tasks
 
+    include Enumerable
+
     def initialize
         @tasks = Array.new
     end
@@ -127,6 +139,19 @@ class TaskSet
         end
 
         return nil
+    end
+
+    def each
+        @tasks.each { |task| yield task }
+        return @tasks
+    end
+
+    def sort!
+        @tasks = self.sort
+    end
+
+    def reverse!
+        @tasks = @tasks.reverse
     end
 
     def to_json
@@ -185,6 +210,8 @@ logfile.each do |line|
         end
     end
 end
+
+tasks.sort!.reverse!
 
 piechart_file = File.open('tasks_piechart.json', 'w')
 piechart_file.puts(tasks.to_json)
