@@ -1,0 +1,32 @@
+24-02-2014 09:47:10 [start] Hour registration - Task
+24-02-2014 09:47:31 [stop]  Hour registration - Task
+24-02-2014 09:48:24 [start] Fix power converters - Task
+24-02-2014 09:48:39 [stop]  Fix power converters - Task
+24-02-2014 09:49:04 [start] Fix power converters - Task
+24-02-2014 10:15:25 [stop]  Fix power converters - Task
+24-02-2014 10:17:25 [start] Find the meaning of life - Task
+24-02-2014 11:00:12 [stop]  Find the meaning of life - Task
+24-02-2014 11:30:02 [start] Find the meaning of life - Task
+24-02-2014 12:06:08 [start] Chatting - Task
+24-02-2014 12:06:33 [stop]  Chatting - Task
+24-02-2014 13:48:21 [start] PDP 2014 notes - Task
+24-02-2014 13:50:11 [stop]  PDP 2014 notes - Task
+24-02-2014 15:27:35 [stop]  Find the meaning of life - Task
+24-02-2014 16:07:21 [start] Chatting - Task
+24-02-2014 16:07:46 [stop]  Chatting - Task
+24-02-2014 16:07:51 [start] Fix power converters - Task
+24-02-2014 16:10:11 [stop]  Fix power converters - Task
+24-02-2014 16:16:56 [start] Mission briefing - Task
+24-02-2014 16:17:06 [stop]  Mission briefing - Task
+24-02-2014 16:17:46 [start] Develop regression test scripts - Task
+24-02-2014 16:18:01 [stop]  Develop regression test scripts - Task
+24-02-2014 16:19:21 [start] Meditate over new coffe tastes - Task
+24-02-2014 16:19:51 [stop]  Meditate over new coffe tastes - Task
+24-02-2014 16:28:16 [start] Check flux capacitor leakage - Task
+24-02-2014 16:41:12 [start] Meditate over new coffe tastes - Task
+24-02-2014 17:09:22 [stop]  Check flux capacitor leakage - Task
+24-02-2014 17:13:02 [start] Hour registration - Task
+24-02-2014 17:13:02 [stop]  Meditate over new coffe tastes - Task
+24-02-2014 17:13:48 [start] Afternoon turbo nap - Task
+24-02-2014 17:14:03 [stop]  Afternoon turbo nap - Task
+24-02-2014 17:39:13 [stop]  Hour registration - Task
