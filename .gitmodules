@@ -1,0 +1,3 @@
+[submodule "extern/flot"]
+	path = extern/flot
+	url = https://github.com/flot/flot.git
