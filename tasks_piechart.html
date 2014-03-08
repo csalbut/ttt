@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" >
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Tasks time comparison</title>
+    <link href="extern/flot/examples/examples.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div id="header">
+        <h3>Recent tasks</h3>
+    </div>
+
+    <div id="content">
+
+        <div class="demo-container">
+            <div id="placeholder" class="demo-placeholder"></div>
+        </div>
+
+    </div>
+
+    <div id="footer">
+        Copyright &copy; Cezary Salbut
+    </div>
+
+</body>
+</html>
+
+<script language="javascript" type="text/javascript" src="extern/flot/jquery.js"></script>
+<script language="javascript" type="text/javascript" src="extern/flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="extern/flot/jquery.flot.pie.js"></script>
+
+<script type="text/javascript">
+
+    $(function () {
+        var plotarea = $("#placeholder");
+
+        $.getJSON( "tasks_piechart.json" )
+
+        .done(function( data ) {
+            //console.log( data );
+            $.plot(plotarea , data, {
+                series: {
+                    pie: {
+                        show: true,
+                        radius: 0.8,
+                        combine: {
+                            threshold: 0.03,
+                        },
+                        label: {
+                            show: true,
+                            formatter: labelFormatter,
+                            background: {
+                                opacity: 0.8,
+                            }
+                        }
+                    }
+                },
+                grid: {
+                    hoverable: true,
+                },
+                legend: {
+                    show: true,
+                    position: "nw",
+                }
+            });
+        })
+
+        .fail(function( jqxhr, textStatus, error ) {
+            var err = textStatus + ", " + error;
+            console.log( "Request Failed: " + err );
+        })
+    });
+
+    function labelFormatter(label, series) {
+        return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+    }
+
+</script>
