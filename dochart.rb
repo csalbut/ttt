@@ -145,6 +145,49 @@ class LogEntry
     private :date_str_convert
 end
 
+
+class LogFileParser
+
+    def parse(filename)
+        tasks = TaskSet.new
+        logfile = File.open(filename, 'r')
+
+        logfile.each do |line|
+            log_entry = LogEntry.new(line)
+            task_name = log_entry.get_name
+            timestamp = log_entry.get_time_sec
+
+            if log_entry.start?
+
+                if tasks.include?(task_name)
+                    #puts 'Hey, I know this task! : ' + task_name
+                    task = tasks.get(task_name)
+                else
+                    task = Task.new(task_name)
+                end
+
+                task.add_start_time(timestamp.to_i)
+                tasks.add(task)
+
+            elsif log_entry.stop?
+
+                if tasks.include?(task_name)
+                    #puts 'Hey, I know this task! : ' + task_name
+                    task = tasks.get(task_name)
+                    task.add_stop_time(timestamp.to_i)
+                else
+                    puts 'Error! Encountered [stop] marker without corresponding [start].'
+                end
+            end
+
+        end
+
+        return tasks
+    end
+
+end
+
+
 class PieSlice
     attr_writer :label
     attr_writer :value
@@ -232,38 +275,7 @@ end
 
 
 options = OptionParser.parse(ARGV)
-tasks = TaskSet.new
-logfile = File.open('wintt.txt', 'r')
-
-logfile.each do |line|
-    log_entry = LogEntry.new(line)
-    task_name = log_entry.get_name
-    timestamp = log_entry.get_time_sec
-
-    if log_entry.start?
-
-        if tasks.include?(task_name)
-            #puts 'Hey, I know this task! : ' + task_name
-            task = tasks.get(task_name)
-        else
-            task = Task.new(task_name)
-        end
-
-        task.add_start_time(timestamp.to_i)
-        tasks.add(task)
-
-    elsif log_entry.stop?
-
-        if tasks.include?(task_name)
-            #puts 'Hey, I know this task! : ' + task_name
-            task = tasks.get(task_name)
-            task.add_stop_time(timestamp.to_i)
-        else
-            puts 'Error! Encountered [stop] marker without corresponding [start].'
-        end
-    end
-end
-
+tasks = LogFileParser.new.parse("wintt.txt")
 tasks.sort!.reverse!
 puts(tasks.to_json)
 
