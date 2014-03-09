@@ -3,6 +3,58 @@
 require 'time'
 require 'json'
 
+# Command-line options parsing
+require 'optparse'
+require 'optparse/time'
+require 'ostruct'
+require 'pp'
+
+class OptionParser
+
+    def Time.yesterday; now - 86400; end
+
+    # Return a structure describing the options.
+    def self.parse(args)
+        options = OpenStruct.new
+        options.time_begin = Time.yesterday
+        options.time_end = Time.now
+        options.verbose = false
+
+        opts = OptionParser.new do |opts|
+            opts.banner = "Usage: #{$0} [options]"
+
+            opts.separator ""
+            opts.separator "Options:"
+
+            opts.on("-b", "--tb", "--time-begin <TIME>", Time,
+                    "Analyze only tasks since TIME. Format: '%Y-%m-%d %H:%M:%S %z'",
+                    "Default: 24h ago. Example: '2013-09-24'") do |time|
+                options.time_begin = time
+            end
+
+            opts.on("-e", "--te", "--time-end <TIME>", Time,
+                    "Analyze only tasks before TIME. Format: '%Y-%m-%d %H:%M:%S %z'",
+                    "Default: now. Example: '13:30'") do |time|
+                options.time_end = time if !(time.nil?)
+            end
+
+            opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+                options.verbose = v
+            end
+
+            opts.on_tail("-h", "--help", "Show this message") do
+                puts opts
+                exit
+            end
+
+        end
+
+        opts.parse!(args)
+        options
+    end  # parse()
+end  # class OptionParser
+
+
 class Task
     attr_accessor :name
     attr_reader :duration
@@ -179,10 +231,11 @@ class TaskSet
 end
 
 
+options = OptionParser.parse(ARGV)
 tasks = TaskSet.new
 logfile = File.open('wintt.txt', 'r')
 
-logfile.each do |line| 
+logfile.each do |line|
     log_entry = LogEntry.new(line)
     task_name = log_entry.get_name
     timestamp = log_entry.get_time_sec
@@ -212,8 +265,5 @@ logfile.each do |line|
 end
 
 tasks.sort!.reverse!
-
-piechart_file = File.open('tasks_piechart.json', 'w')
-piechart_file.puts(tasks.to_json)
-piechart_file.close
+puts(tasks.to_json)
 
