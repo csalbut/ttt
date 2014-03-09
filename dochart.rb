@@ -148,7 +148,7 @@ end
 
 class LogFileParser
 
-    def parse(filename)
+    def parse(filename, time_begin, time_end)
         tasks = TaskSet.new
         logfile = File.open(filename, 'r')
 
@@ -157,29 +157,32 @@ class LogFileParser
             task_name = log_entry.get_name
             timestamp = log_entry.get_time_sec
 
-            if log_entry.start?
+            if (time_begin..time_end).cover? Time.at(timestamp)
 
-                if tasks.include?(task_name)
-                    #puts 'Hey, I know this task! : ' + task_name
-                    task = tasks.get(task_name)
-                else
-                    task = Task.new(task_name)
+                if log_entry.start?
+
+                    if tasks.include?(task_name)
+                        #puts 'Hey, I know this task! : ' + task_name
+                        task = tasks.get(task_name)
+                    else
+                        task = Task.new(task_name)
+                    end
+
+                    task.add_start_time(timestamp.to_i)
+                    tasks.add(task)
+
+                elsif log_entry.stop?
+
+                    if tasks.include?(task_name)
+                        #puts 'Hey, I know this task! : ' + task_name
+                        task = tasks.get(task_name)
+                        task.add_stop_time(timestamp.to_i)
+                    else
+                        puts 'Error! Encountered [stop] marker without corresponding [start].'
+                    end
                 end
 
-                task.add_start_time(timestamp.to_i)
-                tasks.add(task)
-
-            elsif log_entry.stop?
-
-                if tasks.include?(task_name)
-                    #puts 'Hey, I know this task! : ' + task_name
-                    task = tasks.get(task_name)
-                    task.add_stop_time(timestamp.to_i)
-                else
-                    puts 'Error! Encountered [stop] marker without corresponding [start].'
-                end
             end
-
         end
 
         return tasks
@@ -275,7 +278,7 @@ end
 
 
 options = OptionParser.parse(ARGV)
-tasks = LogFileParser.new.parse("wintt.txt")
+tasks = LogFileParser.new.parse("wintt.txt", options.time_begin, options.time_end)
 tasks.sort!.reverse!
 puts(tasks.to_json)
 
