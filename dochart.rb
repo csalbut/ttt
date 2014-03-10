@@ -9,6 +9,8 @@ require 'optparse/time'
 require 'ostruct'
 require 'pp'
 
+require './time_utils.rb'
+
 class OptionParser
 
     def Time.yesterday; now - 86400; end
@@ -58,9 +60,11 @@ end  # class OptionParser
 class Task
     attr_accessor :name
     attr_reader :duration
+    attr_reader :duration_str
     @timestamps
 
     include Comparable
+    include TimeUtilities
 
     def initialize
         @name = ''
@@ -82,6 +86,7 @@ class Task
         last_timestamp = @timestamps.pop
         last_timestamp[:stop] = seconds
         @duration += last_timestamp[:stop] - last_timestamp[:start]
+        @duration_str = human_readable(@duration)
         @timestamps.push(last_timestamp)
     end
 
@@ -256,7 +261,8 @@ class TaskSet
         piechart = Array.new
         @tasks.each do |task|
             slice = PieSlice.new
-            slice.label = task.name
+            slice.label = "[" + task.duration_str.chop + "] " + task.name
+
             slice.value = task.duration
             piechart.push(slice.get)
         end
