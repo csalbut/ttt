@@ -45,10 +45,10 @@
                         show: true,
                         radius: 0.8,
                         combine: {
-                            threshold: 0.03,
+                            threshold: 0.02,
                         },
                         label: {
-                            show: true,
+                            show: false,
                             formatter: labelFormatter,
                             background: {
                                 opacity: 0.8,
@@ -70,6 +70,29 @@
             var err = textStatus + ", " + error;
             console.log( "Request Failed: " + err );
         })
+
+        $("<div id='tooltip'></div>").css({
+            position: "absolute",
+            display: "none",
+            border: "1px solid #fdd",
+            padding: "2px",
+            "background-color": "#fee",
+            opacity: 0.80
+        }).appendTo("body");
+
+        $("#placeholder").bind("plothover", function (event, pos, item) {
+
+            if (item) {
+
+                $("#tooltip").html(item.series.label)
+                        .css({top: pos.pageY+15, left: pos.pageX})
+                        .fadeIn(100);
+            } else {
+                $("#tooltip").hide();
+            }
+        });
+
+
     });
 
     function labelFormatter(label, series) {
