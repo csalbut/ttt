@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Tasks time comparison</title>
-    <link href="extern/flot/examples/examples.css" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -71,14 +71,7 @@
             console.log( "Request Failed: " + err );
         })
 
-        $("<div id='tooltip'></div>").css({
-            position: "absolute",
-            display: "none",
-            border: "1px solid #fdd",
-            padding: "2px",
-            "background-color": "#fee",
-            opacity: 0.80
-        }).appendTo("body");
+        $("<div id='tooltip' class='tooltip'></div>").appendTo("body");
 
         $("#placeholder").bind("plothover", function (event, pos, item) {
 
