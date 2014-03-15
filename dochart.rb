@@ -20,6 +20,7 @@ class OptionParser
         options = OpenStruct.new
         options.time_begin = Time.yesterday
         options.time_end = Time.now
+        options.out_type = "pie"
         options.verbose = false
 
         opts = OptionParser.new do |opts|
@@ -38,6 +39,13 @@ class OptionParser
                     "Analyze only tasks before TIME. Format: '%Y-%m-%d %H:%M:%S %z'",
                     "Default: now. Example: '13:30'") do |time|
                 options.time_end = time if !(time.nil?)
+            end
+
+            opts.on("-t", "--out-type [pie|cal]", String,
+                    "Specify type of generated output.",
+                    "'pie': piechart,",
+                    "'cal': weekly calendar,") do |out_type|
+                options.out_type = out_type
             end
 
             opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
@@ -96,6 +104,18 @@ class Task
         return  1 if s > o
         return -1 if s < o
         return  0 if s == o
+    end
+
+    def to_cal
+        set_of_events = Array.new
+        @timestamps.each do |timestamp|
+            cal_item = CalItem.new
+            cal_item.title = @name
+            cal_item.time_start = timestamp[:start]
+            cal_item.time_stop = timestamp[:stop]
+            set_of_events.push(cal_item.get)
+        end
+        return set_of_events
     end
 
     def dbg_print
@@ -205,6 +225,16 @@ class PieSlice
     end
 end
 
+class CalItem
+    attr_writer :title
+    attr_writer :time_start
+    attr_writer :time_stop
+
+    def get
+        return { :title => @title, :start => @time_start * 1000, :end => @time_stop * 1000 }
+    end
+end
+
 class TaskSet
 
     @tasks
@@ -257,7 +287,7 @@ class TaskSet
         @tasks = @tasks.reverse
     end
 
-    def to_json
+    def to_json_piechart
         piechart = Array.new
         @tasks.each do |task|
             slice = PieSlice.new
@@ -269,10 +299,18 @@ class TaskSet
         return JSON.pretty_generate(piechart)
     end
 
+    def to_json_calendar
+        calendar = Array.new
+        @tasks.each do |task|
+                calendar.push(task.to_cal)
+        end
+        return JSON.pretty_generate(calendar.flatten)
+    end
+
     def dbg_print
         puts "Task set --------"
         puts("Number of tasks: " + @tasks.length.to_s)
-        puts to_json
+        puts to_json_piechart
         puts "-----------------"
     end
 
@@ -286,5 +324,13 @@ end
 options = OptionParser.parse(ARGV)
 tasks = LogFileParser.new.parse("wintt.txt", options.time_begin, options.time_end)
 tasks.sort!.reverse!
-puts(tasks.to_json)
+
+case options.out_type
+when "pie"
+    puts(tasks.to_json_piechart)
+when "cal"
+    puts(tasks.to_json_calendar)
+else
+    puts("Error: output type not specified")
+end
 
