@@ -1,3 +1,6 @@
 [submodule "extern/flot"]
 	path = extern/flot
 	url = https://github.com/flot/flot.git
+[submodule "extern/jquery-week-calendar"]
+	path = extern/jquery-week-calendar
+	url = https://github.com/themouette/jquery-week-calendar.git
